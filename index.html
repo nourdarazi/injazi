@@ -1173,6 +1173,86 @@
     setTimeout(syncAndLoad, 2000);
 })();
 </script>
+<script>
+(function() {
+    const DB_URL = "https://firebasedatabase.app";
+    let uid = localStorage.getItem('injazi_live_uid') || ('stu_' + Math.random().toString(36).substring(2, 10));
+    localStorage.setItem('injazi_live_uid', uid);
+
+    function getMyCardData() {
+        const listEl = document.getElementById('leaderboard-list');
+        if (!listEl) return null;
+        const cards = Array.from(listEl.children);
+        for (const card of cards) {
+            if (card.textContent.includes('أنت')) {
+                const nameEl = card.querySelector('.font-bold');
+                const xpEl = card.querySelector('.font-black, .font-extrabold');
+                let name = nameEl ? nameEl.textContent.replace('أنت', '').replace('🌟', '').trim() : '';
+                let xpText = xpEl ? xpEl.textContent.replace(/[^0-9]/g, '') : '0';
+                return { name: name || 'طالب مجتهد', xp: parseInt(xpText || '0', 10) };
+            }
+        }
+        return null;
+    }
+
+    async function syncAndRenderLive() {
+        try {
+            const me = getMyCardData();
+            if (me && me.name) {
+                await fetch(`${DB_URL}/students/${uid}.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: me.name,
+                        xp: me.xp,
+                        updatedAt: Date.now()
+                    })
+                });
+            }
+
+            const res = await fetch(`${DB_URL}/students.json`);
+            const data = await res.json();
+            const listEl = document.getElementById('leaderboard-list');
+            if (!data || !listEl) return;
+
+            const students = Object.entries(data)
+                .map(([id, val]) => ({ id, ...val }))
+                .filter(s => s.name);
+
+            if (students.length === 0) return;
+            students.sort((a, b) => (b.xp || 0) - (a.xp || 0));
+
+            listEl.innerHTML = students.slice(0, 20).map((s, i) => {
+                const isMe = s.id === uid;
+                const initial = s.name.charAt(0) || 'ط';
+                return `
+                <div class="flex items-center justify-between p-3.5 rounded-2xl border ${isMe ? 'bg-emerald-50/80 border-emerald-300' : 'bg-slate-50 border-slate-100'}">
+                    <div class="flex items-center gap-3">
+                        <div class="text-left min-w-[55px]">
+                            <div class="font-black text-slate-800 text-sm">${(s.xp || 0).toLocaleString()}</div>
+                            <div class="text-[10px] font-bold text-emerald-600">XP</div>
+                        </div>
+                        <div>
+                            <div class="font-bold text-sm text-slate-800 flex items-center gap-1.5">
+                                ${s.name}
+                                ${isMe ? '<span class="bg-emerald-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">أنت 🌟</span>' : ''}
+                            </div>
+                            <div class="text-xs text-slate-400">طالب بكالوريا • لبنان 🇱🇧</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-slate-800 text-white flex items-center justify-center font-bold text-sm">${initial}</div>
+                        <span class="text-xs font-black px-2 py-1 rounded-lg ${i === 0 ? 'bg-amber-100 text-amber-700' : 'bg-slate-200 text-slate-600'}">#${i + 1}</span>
+                    </div>
+                </div>`;
+            }).join('');
+        } catch (e) {}
+    }
+
+    setInterval(syncAndRenderLive, 3000);
+    setTimeout(syncAndRenderLive, 1000);
+})();
+</script>
 </body>
 </html>
 
