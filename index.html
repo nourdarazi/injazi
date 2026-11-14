@@ -1099,6 +1099,80 @@
             setTimeout(() => { toast.remove(); }, 3000);
         }
     </script>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBClr0WYaP8c7Hg7Gde5TJoMTxhoJrx5-E",
+    authDomain: "injazi-901be.firebaseapp.com",
+    databaseURL: "https://injazi-901be-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "injazi-901be",
+    storageBucket: "injazi-901be.firebasestorage.app",
+    messagingSenderId: "66260665079",
+    appId: "1:66260665079:web:38cee4f19ea2061ccf49f2",
+    measurementId: "G-RFK6MH54JW"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+<script>
+(function() {
+    const DB_URL = "https://injazi-901be-default-rtdb.europe-west1.firebasedatabase.app";
+    let uid = localStorage.getItem('injazi_live_uid') || ('stu_' + Math.random().toString(36).substring(2, 10));
+    localStorage.setItem('injazi_live_uid', uid);
+
+    async function syncAndLoad() {
+        try {
+            const raw = localStorage.getItem('injazi_state_v1') || localStorage.getItem('injaziState') || '{}';
+            const state = JSON.parse(raw);
+            const name = (state.studentName || '').trim();
+            if (name) {
+                await fetch(`${DB_URL}/students/${uid}.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        school: state.schoolName || 'لبنان 🇱🇧',
+                        minutes: Number(state.totalMinutes || 0)
+                    })
+                });
+            }
+            const res = await fetch(`${DB_URL}/students.json`);
+            const data = await res.json();
+            const listEl = document.getElementById('leaderboard-list');
+            if (!data || !listEl) return;
+
+            const students = Object.entries(data).map(([id, val]) => ({ id, ...val })).filter(s => s.name);
+            if (students.length === 0) return;
+            students.sort((a, b) => (b.minutes || 0) - (a.minutes || 0));
+
+            listEl.innerHTML = students.slice(0, 15).map((s, i) => `
+                <div class="flex items-center justify-between p-3 rounded-2xl border ${s.id === uid ? 'bg-teal-50 border-teal-300' : 'bg-slate-50 border-slate-100'}">
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-lg flex items-center justify-center font-black text-xs text-white bg-teal-700">${i + 1}</span>
+                        <div>
+                            <div class="font-bold text-sm text-slate-800">${s.name}</div>
+                            <div class="text-[11px] text-slate-500">${s.school || ''}</div>
+                        </div>
+                    </div>
+                    <div class="font-black text-teal-700 text-sm">${s.minutes || 0} د</div>
+                </div>
+            `).join('');
+        } catch (e) {}
+    }
+
+    setInterval(syncAndLoad, 15000);
+    setTimeout(syncAndLoad, 2000);
+})();
+</script>
 </body>
 </html>
 
