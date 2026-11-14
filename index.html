@@ -1,1 +1,1105 @@
+```html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة إنجازي | رفيقك الذكي للبكالوريا اللبنانية</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome الأيقونات الرسمية -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Cairo خط عربي عصري -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #F8FAFC;
+            color: #0F172A;
+        }
+        .official-card {
+            background: #ffffff;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -1px rgba(15, 23, 42, 0.03);
+            transition: all 0.3s ease;
+        }
+        .official-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.08);
+        }
+        /* تخصيص شريط التمرير */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 selection:bg-emerald-100 selection:text-emerald-800">
 
+    <!-- شريط علوي رسمي لجمهورية لبنان -->
+    <header class="bg-[#0F172A] text-white border-b-4 border-[#CE1126] shadow-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-amber-400 text-lg shadow-inner shrink-0">
+                    🇱🇧
+                </div>
+                <div>
+                    <h1 class="text-sm sm:text-lg font-black tracking-wide flex items-center gap-2">
+                        <span>إنجازي</span>
+                        <span class="text-[9px] font-extrabold px-2 py-0.5 rounded bg-[#CE1126] text-white hidden sm:inline">منصة طالب البكالوريا</span>
+                    </h1>
+                    <p class="text-[9px] sm:text-[10px] text-slate-300 font-medium">لوحة تحكم طالب البكالوريا اللبنانية</p>
+                </div>
+            </div>
+
+            <!-- إعدادات سريعة -->
+            <div class="flex items-center gap-2">
+                <button onclick="triggerMinisterRandom()" class="px-3 py-1.5 rounded-xl bg-red-900/50 hover:bg-red-800 text-red-200 border border-red-700/60 text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm" title="استدعاء تنبيه عشوائي من معالي الوزيرة">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+                    <span class="hidden md:inline">تنبيه الوزيرة</span>
+                </button>
+                <button onclick="resetDataPrompt()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 flex items-center justify-center text-xs transition" title="إعدادات وتصفير التقدم">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- شريط الهوية الشخصية والمستوى (حقول إدخال مباشرة بدون نوافذ وبدون مربع الأبجدي وبخانة اسم أوسع) -->
+    <section class="bg-white border-b border-slate-200 shadow-sm py-4 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            
+            <!-- حقول الإدخال المباشر للأسماء والفرع -->
+            <div class="flex items-center gap-3.5 flex-wrap">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 flex-wrap">
+                    <!-- حقل إدخال اسم الطالب المباشر (بعرض أوسع w-64 لتظهر كلمة اسمك كاملة) -->
+                    <input type="text" id="inline-student-name" oninput="handleNameInput(this.value)" placeholder="+ أضف اسمك الكامل هنا" class="px-3.5 py-2 rounded-xl border border-slate-300 text-sm font-black text-slate-900 focus:outline-none focus:border-[#00A651] bg-slate-50 w-60 sm:w-64 shadow-inner">
+                    
+                    <!-- حقل إدخال اسم المدرسة المباشر -->
+                    <input type="text" id="inline-school-name" oninput="handleSchoolInput(this.value)" placeholder="+ أضف مدرستك" class="px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 focus:outline-none focus:border-[#00A651] bg-slate-50 w-48 sm:w-60 shadow-inner">
+
+                    <!-- قائمة اختيار الفرع المباشرة -->
+                    <select id="inline-student-branch" onchange="handleBranchChange(this.value)" class="px-3 py-2 rounded-xl border border-slate-300 text-xs font-black focus:outline-none focus:border-[#00A651] bg-[#0F172A] text-white shadow-sm cursor-pointer">
+                        <option value="GS / SG">GS / SG (علوم عامة)</option>
+                        <option value="LS / SV">LS / SV (علوم حياة)</option>
+                        <option value="ES / SE">ES / SE (اقتصاد واجتماع)</option>
+                        <option value="HL / LH">HL / LH (آداب وانسانيات)</option>
+                    </select>
+
+                    <span id="header-level-badge" class="text-[11px] font-black px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300">
+                        Lv.1
+                    </span>
+                </div>
+            </div>
+
+            <!-- شريط تقدم المستوى والـ XP -->
+            <div class="flex flex-wrap items-center gap-4 sm:gap-6">
+                <div class="flex-1 min-w-[220px] sm:min-w-[260px]">
+                    <div class="flex items-center justify-between text-xs mb-1">
+                        <span class="font-extrabold text-[#0F172A]">
+                            المستوى <span id="header-level-text">1</span> <span class="text-[10px] text-slate-400 font-bold">(<span id="header-xp-current">0</span> / <span id="header-xp-next">1,000</span> دقيقة)</span>
+                        </span>
+                        <span class="font-extrabold text-[#00A651]">
+                            <i class="fa-solid fa-stopwatch text-amber-500 ml-0.5"></i>
+                            نشط
+                        </span>
+                    </div>
+                    <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden p-0.5">
+                        <div id="header-xp-bar" class="h-full rounded-full bg-gradient-to-l from-[#00A651] via-emerald-500 to-[#0F172A] transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Streak الالتزام اليومي (6 أيام) -->
+                <div class="flex items-center gap-2 bg-amber-50 border border-amber-200 px-3 py-2 rounded-2xl shadow-sm">
+                    <span class="text-xl animate-bounce">🔥</span>
+                    <div>
+                        <span class="text-[10px] text-amber-800 font-bold block">الالتزام اليومي</span>
+                        <span class="text-xs font-black text-amber-900"><span id="header-streak-days">6</span> أيام متتالية</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- المحتوى الرئيسي للوحة التحكم -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- 1. عداد الـ 100,000 دقيقة الرئيسي -->
+        <section id="master-goal-card" class="official-card rounded-3xl p-5 sm:p-7 relative overflow-hidden border-2 border-[#0F172A] bg-gradient-to-l from-white via-slate-50 to-emerald-50/40">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4">
+                <div>
+                    <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                        <span class="text-[11px] font-black px-3 py-1 rounded-full bg-[#CE1126] text-white shadow-sm">
+                            الهدف الوطني الكبير 🇱🇧
+                        </span>
+                        <span id="current-rank-pill" class="text-xs font-extrabold px-3 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300">
+                            الرتبة الحالية: طالب طموح 🚀
+                        </span>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-black text-[#0F172A]">
+                        تحدي الـ 100,000 دقيقة - رحلة التفوق في البكالوريا
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-600 font-semibold mt-1">
+                        كل دقيقة دراسة = <span class="text-[#00A651] font-extrabold">1 XP</span> • كل <span class="text-[#0F172A] font-extrabold">1,000 دقيقة</span> ترفعك مستوى جديداً نحو المستوى 100!
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-3 bg-white border border-slate-200 rounded-2xl px-4 py-3 shadow-sm shrink-0">
+                    <div class="text-right">
+                        <span class="text-[11px] font-bold text-slate-500 block">الرصيد التراكمي المنجز</span>
+                        <div class="text-lg sm:text-2xl font-black text-[#0F172A] font-mono">
+                            <span id="master-minutes-current" class="text-[#00A651]">1,250</span>
+                            <span class="text-slate-400 text-sm sm:text-base font-bold">/ 100,000 دقيقة</span>
+                        </div>
+                    </div>
+                    <div class="h-10 w-px bg-slate-200"></div>
+                    <div class="text-center min-w-[68px]">
+                        <span id="master-percentage-text" class="text-lg sm:text-xl font-black text-[#CE1126]">1.25%</span>
+                        <span class="text-[10px] font-bold text-slate-400 block">من الهدف</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- شريط التقدم الضخم -->
+            <div class="relative w-full h-6 bg-slate-200/90 rounded-2xl overflow-hidden p-1 shadow-inner border border-slate-300/80">
+                <div id="master-progress-bar" class="h-full rounded-xl bg-gradient-to-l from-[#00A651] via-emerald-500 to-[#CE1126] transition-all duration-700 flex items-center justify-end px-2 relative overflow-hidden" style="width: 1.25%"></div>
+            </div>
+
+            <div class="flex items-center justify-between text-[10px] sm:text-xs font-extrabold text-slate-500 mt-2 px-1">
+                <span>البداية (0)</span>
+                <span class="hidden sm:inline">25,000 د</span>
+                <span>50,000 د (نصف الطريق 🔥)</span>
+                <span class="hidden sm:inline">75,000 د</span>
+                <span class="text-[#00A651]">100,000 د (الأسطورة 🏆)</span>
+            </div>
+        </section>
+
+        <!-- شريط ملخص سريع للإحصائيات -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div class="official-card rounded-2xl p-4 flex items-center gap-3.5 border-r-4 border-r-[#00A651]">
+                <div class="w-11 h-11 rounded-xl bg-emerald-50 text-[#00A651] flex items-center justify-center text-xl shrink-0 border border-emerald-100">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500 font-bold">دقائق الدراسة / XP</p>
+                    <p class="text-xl sm:text-2xl font-black text-slate-900"><span id="stat-total-xp">1,250</span> <span class="text-xs font-extrabold text-[#00A651]">XP</span></p>
+                </div>
+            </div>
+
+            <div class="official-card rounded-2xl p-4 flex items-center gap-3.5 border-r-4 border-r-[#CE1126]">
+                <div class="w-11 h-11 rounded-xl bg-red-50 text-[#CE1126] flex items-center justify-center text-xl shrink-0 border border-red-100">
+                    <i class="fa-solid fa-fire"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500 font-bold">الالتزام اليومي</p>
+                    <p class="text-xl sm:text-2xl font-black text-slate-900">6 <span class="text-xs font-extrabold text-[#CE1126]">أيام متتالية</span></p>
+                </div>
+            </div>
+
+            <div class="official-card rounded-2xl p-4 flex items-center gap-3.5 border-r-4 border-r-amber-500">
+                <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl shrink-0 border border-amber-100">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500 font-bold">جلسات بومودورو</p>
+                    <p class="text-xl sm:text-2xl font-black text-slate-900"><span id="stat-pomodoro-sessions">5</span> <span class="text-xs font-extrabold text-amber-600">جلسة</span></p>
+                </div>
+            </div>
+
+            <div class="official-card rounded-2xl p-4 flex items-center gap-3.5 border-r-4 border-r-[#0F172A]">
+                <div class="w-11 h-11 rounded-xl bg-slate-100 text-[#0F172A] flex items-center justify-center text-xl shrink-0 border border-slate-200">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500 font-bold">ترتيب الصف</p>
+                    <p class="text-xl sm:text-2xl font-black text-slate-900">#2 <span class="text-xs font-extrabold text-[#0F172A]">من 25</span></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- شبكة المحتوى التفاعلي (عمودان) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- العمود الأيمن: المهام والأوسمة -->
+            <div class="lg:col-span-7 space-y-6">
+
+                <!-- 3. قسم المهام والتحديات اليومية (Quests) والمواد المدرسية -->
+                <section class="official-card rounded-3xl p-4 sm:p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3.5 border-b border-slate-100">
+                        <div>
+                            <h2 class="text-lg sm:text-xl font-black text-[#0F172A] flex items-center gap-2">
+                                <span class="w-8 h-8 rounded-xl bg-emerald-50 text-[#00A651] border border-emerald-200 flex items-center justify-center text-sm">
+                                    <i class="fa-solid fa-list-check"></i>
+                                </span>
+                                المهام والمناهج الدراسية (البكالوريا)
+                            </h2>
+                            <p class="text-[11px] text-slate-500 font-medium mt-0.5">اختر فرعك اللبناني أو أضف موادك المخصصة</p>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <button onclick="openAddSubjectModal()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1">
+                                <i class="fa-solid fa-plus text-[#00A651]"></i>
+                                <span>مادة جديدة</span>
+                            </button>
+                            <button onclick="openAddQuestModal()" class="px-3 py-1.5 rounded-xl bg-[#0F172A] hover:bg-slate-800 text-white text-xs font-extrabold transition shadow-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>مهمة</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- اختيار فرع البكالوريا اللبنانية -->
+                    <div class="mb-4 bg-slate-50 border border-slate-200 p-3 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                        <label class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-graduation-cap text-[#CE1126]"></i>
+                            <span>الفرع الدراسي (البكالوريا اللبنانية):</span>
+                        </label>
+                        <select id="baccalaureate-branch-select" onchange="onBranchChange(this.value)" class="px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-extrabold focus:outline-none focus:border-[#00A651] bg-white text-[#0F172A]">
+                            <option value="GS / SG">فرع العلوم العامة (GS / SG)</option>
+                            <option value="LS / SV">فرع علوم الحياة (LS / SV)</option>
+                            <option value="ES / SE">فرع الاقتصاد والاجتماع (ES / SE)</option>
+                            <option value="HL / LH">فرع الآداب والإنسانيات (HL / LH)</option>
+                        </select>
+                    </div>
+
+                    <!-- تصفية حسب المادة كوسوم ملونة -->
+                    <div class="mb-3 flex items-center gap-1.5 overflow-x-auto pb-2" id="subjects-tags-container">
+                        <!-- الوسوم تولد ديناميكياً -->
+                    </div>
+
+                    <div id="quests-list" class="space-y-2.5 mb-4">
+                        <!-- توليد المهام ديناميكياً -->
+                    </div>
+                </section>
+
+                <!-- 5. قسم الأوسمة والإنجازات (Badges) -->
+                <section class="official-card rounded-3xl p-4 sm:p-6">
+                    <div class="flex items-center justify-between mb-4 pb-3.5 border-b border-slate-100">
+                        <div>
+                            <h2 class="text-lg sm:text-xl font-black text-[#0F172A] flex items-center gap-2">
+                                <span class="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center text-sm">
+                                    <i class="fa-solid fa-medal"></i>
+                                </span>
+                                الأوسمة والشهادات التقديرية
+                            </h2>
+                            <p class="text-[11px] text-slate-500 font-medium mt-0.5">تُمنح الأوسمة تلقائياً عند تحقيق الدقائق</p>
+                        </div>
+                        <span id="badges-unlocked-count" class="text-[10px] sm:text-[11px] font-black px-2 py-1 rounded-xl bg-emerald-50 text-[#00A651] border border-emerald-200 whitespace-nowrap shrink-0">
+                            0 من 4 مفتوحة
+                        </span>
+                    </div>
+
+                    <div id="badges-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- توليد الأوسمة ديناميكياً -->
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- العمود الأيسر: مؤقت التركيز + لوحة المتصدرين -->
+            <div class="lg:col-span-5 space-y-6">
+
+                <!-- 2. قسم مؤقت التركيز الذكي (Pomodoro) -->
+                <section class="official-card rounded-3xl p-5 sm:p-6 relative overflow-hidden border-t-4 border-t-[#0F172A]">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-black text-[#0F172A] flex items-center gap-2.5">
+                            <span class="w-9 h-9 rounded-xl bg-slate-100 text-[#0F172A] border border-slate-200 flex items-center justify-center text-base">
+                                <i class="fa-solid fa-brain"></i>
+                            </span>
+                            مؤقت التركيز الذكي
+                        </h2>
+                        <span id="focus-mode-badge" class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-emerald-50 text-[#00A651] border border-emerald-200">
+                            +25 دقيقة / جلسة
+                        </span>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center py-4">
+                        <div class="relative w-48 h-48 sm:w-52 sm:h-52 rounded-full border-8 border-slate-100 flex items-center justify-center shadow-inner bg-gradient-to-b from-slate-50 to-white">
+                            <div class="text-center">
+                                <span id="timer-mode-label" class="text-[11px] font-extrabold text-[#CE1126] uppercase tracking-wider block mb-1">وقت الدراسة 📚</span>
+                                <div id="timer-display" class="text-4xl sm:text-5xl font-black text-[#0F172A] font-mono tracking-tight">25:00</div>
+                                <span class="text-[10px] text-slate-400 font-bold block mt-1">جلسة بومودورو</span>
+                            </div>
+                        </div>
+
+                        <!-- أزرار التحكم بالمؤقت -->
+                        <div class="flex items-center gap-3 mt-6">
+                            <button id="timer-start-btn" onclick="toggleTimer()" class="px-6 py-3 rounded-2xl bg-[#00A651] hover:bg-emerald-700 text-white font-extrabold text-sm shadow-lg shadow-emerald-600/20 transition flex items-center gap-2">
+                                <i class="fa-solid fa-play"></i>
+                                <span>بدء الجلسة</span>
+                            </button>
+                            <button onclick="resetTimer()" class="px-4 py-3 rounded-2xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-extrabold text-sm transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-rotate-right"></i>
+                                <span>إعادة ضبط</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- أزرار المعاينة السريعة -->
+                    <div class="mt-4 pt-3.5 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <button onclick="completeDemoSession()" class="py-2.5 px-3 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-[#CE1126] font-extrabold text-xs transition flex items-center justify-center gap-1.5 group">
+                            <i class="fa-solid fa-wand-magic-sparkles text-[#CE1126] group-hover:rotate-12 transition"></i>
+                            <span>جلسة تجريبية (+25 د)</span>
+                        </button>
+                        <button onclick="addQuickMinutes(100)" class="py-2.5 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-800 font-extrabold text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-forward-fast text-amber-600"></i>
+                            <span>+100 دقيقة (تجربة سريعة)</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- 4. لوحة المتصدرين في الصف (Leaderboard) -->
+                <section class="official-card rounded-3xl p-5 sm:p-6">
+                    <div class="flex items-center justify-between mb-4 pb-3.5 border-b border-slate-100">
+                        <h2 class="text-xl font-black text-[#0F172A] flex items-center gap-2.5">
+                            <span class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center text-base">
+                                <i class="fa-solid fa-trophy"></i>
+                            </span>
+                            لوحة المتصدرين في الصف 🏆
+                        </h2>
+                        <span class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-300">
+                            ثانوية نزيه البزري
+                        </span>
+                    </div>
+
+                    <p class="text-[11px] text-slate-500 font-medium mb-3">يمكنك النقر على أي اسم في الجدول لتعديله وتخصيصه فوراً:</p>
+                    <div id="leaderboard-list" class="space-y-2.5">
+                        <!-- توليد المتصدرين القابلين للتعديل ديناميكياً -->
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+        <!-- 3. خريطة الرتب والجوائز الكبرى (10 Milestones) -->
+        <section class="official-card rounded-3xl p-5 sm:p-7 border-t-4 border-t-amber-500">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-black text-[#0F172A] flex items-center gap-2.5">
+                        <span class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                        </span>
+                        خريطة الرتب والجوائز الكبرى (كل 10,000 دقيقة)
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+                        10 محطات كبرى تفتح تلقائياً مع التقدم في الـ 100 مستوى وتمنحك ألقاباً ومزايا حصرية
+                    </p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="addQuickMinutes(10000)" class="text-xs font-extrabold px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-400 border border-slate-700 transition shadow-sm" title="اختبار فتح محطة 10,000 دقيقة مباشرة أمام الكاميرا">
+                        <i class="fa-solid fa-rocket ml-1"></i> +10,000 د (اختبار محطة)
+                    </button>
+                    <span id="milestones-unlocked-count" class="text-xs font-extrabold px-3.5 py-2 rounded-xl bg-amber-50 text-amber-800 border border-amber-200">
+                        0 / 10 محطات
+                    </span>
+                </div>
+            </div>
+
+            <div id="milestones-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+                <!-- توليد المحطات ديناميكياً -->
+            </div>
+        </section>
+    </main>
+
+    <!-- 6. الفوتر الرسمي وحقوق الملكية -->
+    <footer class="bg-[#0F172A] text-white mt-auto border-t border-slate-800 py-6 px-4 sm:px-6 lg:px-8 text-center">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-lg bg-[#CE1126] text-white flex items-center justify-center text-xs font-bold">🇱🇧</span>
+                <span class="text-xs font-bold text-slate-300">الجمهورية اللبنانية • منصة التعليم اللبنانية</span>
+            </div>
+            <p class="text-xs text-slate-400 font-medium">
+                تم التصميم والتطوير والابتكار بواسطة: <span id="footer-student-name" class="text-amber-400 font-extrabold">نور درزي</span> طالبة في <span id="footer-school-name" class="text-emerald-400 font-extrabold">ثانوية الدكتور نزيه البزري</span> - صيدا، لبنان.
+            </p>
+        </div>
+    </footer>
+
+    <!-- نافذة منبثقة: تنبيهات معالي الوزيرة د. ريما كرامي الحازمة -->
+    <div id="minister-modal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl border-2 border-[#0F172A] overflow-hidden animate-in fade-in zoom-in duration-200">
+            <!-- شريط علوي للوزارة -->
+            <div class="bg-[#0F172A] text-white px-5 py-3.5 flex items-center justify-between border-b-4 border-[#CE1126]">
+                <div class="flex items-center gap-2">
+                    <span class="text-lg">🇱🇧</span>
+                    <span class="text-xs font-black tracking-wide">منصة البكالوريا اللبنانية</span>
+                </div>
+                <span id="minister-category-badge" class="text-[10px] font-black px-2.5 py-1 rounded-lg bg-[#CE1126] text-white">
+                    تنبيه تربوي حازم ⚠️
+                </span>
+            </div>
+
+            <!-- محتوى التنبيه -->
+            <div class="p-6 text-center space-y-4">
+                <div class="relative w-24 h-24 mx-auto">
+                    <div class="w-24 h-24 rounded-full border-4 border-[#0F172A] overflow-hidden shadow-md bg-slate-200 flex items-center justify-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Rima_Karami_Akkary.jpg" alt="د. ريما كرامي" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/100x100/0f172a/ffffff?text=RK'">
+                    </div>
+                    <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-[#00A651] text-white text-[9px] font-black px-2 py-0.5 rounded-full border border-white shadow">
+                        متّصل الآن
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-base font-black text-[#0F172A]">د. ريما كرامي</h3>
+                    <p class="text-xs text-slate-500 font-bold">أستاذة وباحثة تربوية - الجمهورية اللبنانية</p>
+                </div>
+
+                <!-- صندوق الاقتباس -->
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 relative">
+                    <i class="fa-solid fa-quote-right text-slate-300 text-3xl absolute top-2 right-3 -z-0"></i>
+                    <p id="minister-quote-text" class="text-sm font-black text-slate-800 relative z-10 leading-relaxed">
+                        "الانضباط يعني تكمل الجلسة للآخر، مش تهرب عند أول صعوبة."
+                    </p>
+                </div>
+
+                <!-- زر الاستجابة -->
+                <button onclick="closeMinisterModal()" class="w-full py-3 rounded-xl bg-[#00A651] hover:bg-emerald-700 text-white text-xs font-black shadow-md transition flex items-center justify-center gap-2">
+                    <span>حاضر معالي الوزيرة، راجع للدراسة حالاً!</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إضافة مادة مخصصة جديدة -->
+    <div id="subject-modal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden p-6 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 class="text-base font-black text-[#0F172A]">إضافة مادة مخصصة جديدة</h3>
+                <button onclick="closeAddSubjectModal()" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+            <div>
+                <label class="block text-xs font-extrabold text-slate-700 mb-1">اسم المادة الدراسية</label>
+                <input type="text" id="new-custom-subject-input" placeholder="مثلاً: تكنولوجيا المعلومات..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-[#00A651]">
+            </div>
+            <div class="flex items-center gap-2 pt-2">
+                <button onclick="saveCustomSubject()" class="flex-1 py-2.5 rounded-xl bg-[#00A651] text-white text-xs font-black shadow-md">إضافة المادة</button>
+                <button onclick="closeAddSubjectModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إضافة مهمة جديدة -->
+    <div id="quest-modal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden p-6 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 class="text-base font-black text-[#0F172A]">إضافة مهمة دراسية جديدة</h3>
+                <button onclick="closeAddQuestModal()" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 mb-1">عنوان المهمة</label>
+                    <input type="text" id="new-quest-title" placeholder="مثلاً: حل 10 مسائل..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-[#00A651]">
+                </div>
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 mb-1">المادة الدراسية</label>
+                    <select id="new-quest-subject-select" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-[#00A651] bg-white">
+                        <!-- تملأ ديناميكياً -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 mb-1">نقاط الخبرة (XP / دقائق)</label>
+                    <input type="number" id="new-quest-xp" value="50" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:border-[#00A651]">
+                </div>
+            </div>
+            <div class="flex items-center gap-2 pt-2">
+                <button onclick="saveNewQuest()" class="flex-1 py-2.5 rounded-xl bg-[#00A651] text-white text-xs font-black shadow-md">إضافة المهمة</button>
+                <button onclick="closeAddQuestModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- إشعار Toast عائم للتنبيهات -->
+    <div id="toast-container" class="fixed bottom-6 left-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- السكريبت البرمجي المتكامل -->
+    <script>
+        const STORAGE_KEY = 'injazzy_lebanon_100k_v10';
+        const MASTER_GOAL_MINUTES = 100000;
+        const MINUTES_PER_LEVEL = 1000;
+
+        // خريطة المواد حسب فروع البكالوريا اللبنانية الرسمية
+        const branchSubjectsMap = {
+            "ES / SE": ["اقتصاد", "اجتماع", "فلسفة وحضارات", "جغرافيا", "تاريخ", "تربية وطنية", "رياضيات", "لغة عربية", "لغة أجنبية", "بيولوجيا", "كيمياء", "فيزياء"],
+            "HL / LH": ["فلسفة وحضارات", "فلسفة عربية", "لغة عربية وآدابها", "لغة أجنبية", "تاريخ", "جغرافيا", "تربية وطنية", "رياضيات", "بيولوجيا", "كيمياء", "فيزياء"],
+            "GS / SG": ["رياضيات", "فيزياء", "كيمياء", "فلسفة وحضارات", "لغة عربية", "لغة أجنبية", "تاريخ", "جغرافيا", "تربية وطنية"],
+            "LS / SV": ["بيولوجيا", "كيمياء", "فيزياء", "رياضيات", "فلسفة وحضارات", "لغة عربية", "لغة أجنبية", "تاريخ", "جغرافيا", "تربية وطنية"]
+        };
+
+        const defaultState = {
+            studentName: 'نور درزي',
+            schoolName: 'ثانوية الدكتور نزيه البزري - صيدا، لبنان',
+            studentBranch: 'GS / SG',
+            customSubjects: [],
+            selectedSubjectFilter: 'الكل',
+            xp: 0,
+            streak: 6,
+            pomodoroSessions: 0,
+            quests: [
+                { id: 1, title: 'رياضيات', subject: 'رياضيات', xp: 50, completed: false },
+                { id: 2, title: 'فيزياء', subject: 'فيزياء', xp: 50, completed: false },
+                { id: 3, title: 'كيمياء', subject: 'كيمياء', xp: 30, completed: false }
+            ],
+            classmates: [
+                { id: 'c1', name: 'الطالب الأول', xp: 3500, avatar: 'أ' },
+                { id: 'c2', name: 'الطالب الثاني', xp: 2800, avatar: 'ب' },
+                { id: 'c3', name: 'الطالب الثالث', xp: 1900, avatar: 'ج' },
+                { id: 'c4', name: 'الطالب الرابع', xp: 1200, avatar: 'د' }
+            ]
+        };
+
+        let appState = loadState();
+
+        function loadState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) return JSON.parse(saved);
+            } catch (e) {}
+            return JSON.parse(JSON.stringify(defaultState));
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+            } catch (e) {}
+        }
+
+        function getCurrentBranchSubjects() {
+            const branch = appState.studentBranch || 'GS / SG';
+            const baseSubjects = branchSubjectsMap[branch] || branchSubjectsMap['GS / SG'];
+            const custom = appState.customSubjects || [];
+            return [...baseSubjects, ...custom];
+        }
+
+        function handleNameInput(val) {
+            appState.studentName = val;
+            saveState();
+            updateIdentityUI();
+        }
+
+        function handleSchoolInput(val) {
+            appState.schoolName = val;
+            saveState();
+            updateIdentityUI();
+        }
+
+        function handleBranchChange(val) {
+            appState.studentBranch = val;
+            saveState();
+            renderAll();
+            showToast(`تم تحديث الفرع إلى: ${val}`);
+        }
+
+        function onBranchChange(branch) {
+            appState.studentBranch = branch;
+            saveState();
+            renderAll();
+            showToast(`تم تحديث الفرع إلى: ${branch}`);
+        }
+
+        function openAddSubjectModal() {
+            document.getElementById('new-custom-subject-input').value = '';
+            document.getElementById('subject-modal').classList.remove('hidden');
+            document.getElementById('subject-modal').classList.add('flex');
+        }
+        function closeAddSubjectModal() {
+            document.getElementById('subject-modal').classList.add('hidden');
+            document.getElementById('subject-modal').classList.remove('flex');
+        }
+        function saveCustomSubject() {
+            const sub = document.getElementById('new-custom-subject-input').value.trim();
+            if (!sub) {
+                showToast("الرجاء إدخال اسم المادة!");
+                return;
+            }
+            if (!appState.customSubjects) appState.customSubjects = [];
+            if (!appState.customSubjects.includes(sub)) {
+                appState.customSubjects.push(sub);
+                saveState();
+                renderAll();
+                showToast(`تمت إضافة المادة "${sub}" بنجاح!`);
+            } else {
+                showToast("المادة موجودة مسبقاً!");
+            }
+            closeAddSubjectModal();
+        }
+
+        function editClassmateName(id) {
+            const classmate = appState.classmates.find(c => c.id === id);
+            if (!classmate) return;
+            const newName = prompt("أدخل الاسم الجديد للطالب:", classmate.name);
+            if (newName && newName.trim() !== '') {
+                classmate.name = newName.trim();
+                classmate.avatar = newName.trim().charAt(0);
+                saveState();
+                renderAll();
+                showToast("تم تحديث اسم الطالب بنجاح!");
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderAll();
+        });
+
+        function updateIdentityUI() {
+            const hasName = appState.studentName && appState.studentName.trim() !== '';
+            const schoolDisplay = appState.schoolName && appState.schoolName.trim() !== '' ? appState.schoolName : 'ثانوية الدكتور نزيه البزري - صيدا، لبنان';
+            
+            document.getElementById('footer-student-name').textContent = hasName ? appState.studentName : 'نور درزي';
+            document.getElementById('footer-school-name').textContent = schoolDisplay;
+        }
+
+        function renderAll() {
+            const nameInputEl = document.getElementById('inline-student-name');
+            const schoolInputEl = document.getElementById('inline-school-name');
+            const branchSelectEl = document.getElementById('inline-student-branch');
+
+            if (nameInputEl && document.activeElement !== nameInputEl) {
+                nameInputEl.value = appState.studentName || 'نور درزي';
+            }
+            if (schoolInputEl && document.activeElement !== schoolInputEl) {
+                schoolInputEl.value = appState.schoolName || 'ثانوية الدكتور نزيه البزري - صيدا، لبنان';
+            }
+            if (branchSelectEl) {
+                branchSelectEl.value = appState.studentBranch || 'GS / SG';
+            }
+
+            updateIdentityUI();
+
+            const branchSelect = document.getElementById('baccalaureate-branch-select');
+            if (branchSelect) branchSelect.value = appState.studentBranch || 'GS / SG';
+
+            const currentXP = appState.xp;
+            const currentLevel = Math.min(100, Math.floor(currentXP / MINUTES_PER_LEVEL) + 1);
+            const xpInCurrentLevel = currentXP % MINUTES_PER_LEVEL;
+            const percentage = Math.min(100, (currentXP / MASTER_GOAL_MINUTES) * 100).toFixed(2);
+
+            document.getElementById('header-level-badge').textContent = `Lv.${currentLevel}`;
+            document.getElementById('header-level-text').textContent = currentLevel;
+            document.getElementById('header-xp-current').textContent = xpInCurrentLevel.toLocaleString();
+            document.getElementById('header-xp-next').textContent = MINUTES_PER_LEVEL.toLocaleString();
+            document.getElementById('header-xp-bar').style.width = `${(xpInCurrentLevel / MINUTES_PER_LEVEL) * 100}%`;
+
+            document.getElementById('stat-total-xp').textContent = currentXP.toLocaleString();
+            document.getElementById('stat-pomodoro-sessions').textContent = appState.pomodoroSessions;
+
+            document.getElementById('master-minutes-current').textContent = currentXP.toLocaleString();
+            document.getElementById('master-percentage-text').textContent = `${percentage}%`;
+            document.getElementById('master-progress-bar').style.width = `${percentage}%`;
+
+            let rankTitle = "طالب طموح 🚀";
+            if (currentXP >= 90000) rankTitle = "أسطورة البكالوريا 🏆🇱🇧";
+            else if (currentXP >= 70000) rankTitle = "عقل استراتيجي 🧠";
+            else if (currentXP >= 50000) rankTitle = "نصف الطريق للأسطورة 🔥";
+            else if (currentXP >= 30000) rankTitle = "بطل التركيز 🥇";
+            else if (currentXP >= 10000) rankTitle = "طالب مجتهد 🥉";
+            document.getElementById('current-rank-pill').textContent = `الرتبة الحالية: ${rankTitle}`;
+
+            renderSubjectsTags();
+            renderQuests();
+            renderBadges();
+            renderLeaderboard();
+            renderMilestones();
+        }
+
+        function renderSubjectsTags() {
+            const container = document.getElementById('subjects-tags-container');
+            container.innerHTML = '';
+            const allSubs = ['الكل', ...getCurrentBranchSubjects()];
+            const currentFilter = appState.selectedSubjectFilter || 'الكل';
+
+            allSubs.forEach(sub => {
+                const isSelected = currentFilter === sub;
+                const btn = document.createElement('button');
+                btn.className = `px-2.5 py-1 rounded-xl text-[11px] font-extrabold whitespace-nowrap transition border ${isSelected ? 'bg-[#0F172A] text-white border-[#0F172A] shadow-sm' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'}`;
+                btn.textContent = sub;
+                btn.onclick = () => {
+                    appState.selectedSubjectFilter = sub;
+                    renderQuests();
+                    renderSubjectsTags();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderQuests() {
+            const container = document.getElementById('quests-list');
+            container.innerHTML = '';
+            
+            const filter = appState.selectedSubjectFilter || 'الكل';
+            const filteredQuests = filter === 'الكل' ? appState.quests : appState.quests.filter(q => q.subject === filter);
+
+            if (filteredQuests.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-3">لا توجد مهام لهذه المادة حالياً.</p>`;
+                return;
+            }
+
+            filteredQuests.forEach(quest => {
+                const div = document.createElement('div');
+                div.className = `p-3 rounded-2xl border transition flex items-center justify-between gap-3 ${quest.completed ? 'bg-emerald-50/50 border-emerald-200' : 'bg-white border-slate-200 hover:bg-slate-50'}`;
+                div.innerHTML = `
+                    <div class="flex items-center gap-3 min-w-0">
+                        <input type="checkbox" ${quest.completed ? 'checked' : ''} onchange="toggleQuest(${quest.id})" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer shrink-0">
+                        <div class="min-w-0">
+                            <span class="text-xs sm:text-sm font-black ${quest.completed ? 'line-through text-slate-400' : 'text-slate-800'} block truncate">${quest.title}</span>
+                            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">${quest.subject}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span class="text-[11px] font-extrabold text-[#00A651] bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200">+${quest.xp} XP</span>
+                        <button onclick="deleteQuest(${quest.id})" class="text-slate-400 hover:text-red-600 text-xs p-1" title="حذف المهمة">✕</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleQuest(id) {
+            const quest = appState.quests.find(q => q.id === id);
+            if (!quest) return;
+            quest.completed = !quest.completed;
+            if (quest.completed) {
+                appState.xp += quest.xp;
+                showToast(`أنجزت المهمة! مبروك +${quest.xp} XP`);
+            } else {
+                appState.xp = Math.max(0, appState.xp - quest.xp);
+            }
+            saveState();
+            renderAll();
+        }
+
+        function openAddQuestModal() {
+            const select = document.getElementById('new-quest-subject-select');
+            select.innerHTML = '';
+            getCurrentBranchSubjects().forEach(sub => {
+                const opt = document.createElement('option');
+                opt.value = sub;
+                opt.textContent = sub;
+                select.appendChild(opt);
+            });
+
+            document.getElementById('new-quest-title').value = '';
+            document.getElementById('quest-modal').classList.remove('hidden');
+            document.getElementById('quest-modal').classList.add('flex');
+        }
+        function closeAddQuestModal() {
+            document.getElementById('quest-modal').classList.add('hidden');
+            document.getElementById('quest-modal').classList.remove('flex');
+        }
+        function saveNewQuest() {
+            const title = document.getElementById('new-quest-title').value.trim();
+            const subject = document.getElementById('new-quest-subject-select').value;
+            const xp = parseInt(document.getElementById('new-quest-xp').value) || 50;
+
+            if (!title) {
+                showToast("الرجاء إدخال عنوان المهمة!");
+                return;
+            }
+
+            appState.quests.unshift({
+                id: Date.now(),
+                title,
+                subject,
+                xp,
+                completed: false
+            });
+
+            saveState();
+            renderAll();
+            closeAddQuestModal();
+            showToast("تمت إضافة المهمة بنجاح!");
+        }
+
+        function deleteQuest(id) {
+            appState.quests = appState.quests.filter(q => q.id !== id);
+            saveState();
+            renderAll();
+        }
+
+        function renderLeaderboard() {
+            const container = document.getElementById('leaderboard-list');
+            container.innerHTML = '';
+
+            const hasName = appState.studentName && appState.studentName.trim() !== '';
+            const myName = hasName ? appState.studentName : 'نور درزي';
+            const allUsers = [
+                { id: 'me', name: myName, xp: appState.xp, isMe: true, avatar: hasName ? appState.studentName.charAt(0) : 'ن' },
+                ...appState.classmates
+            ];
+
+            allUsers.sort((a, b) => b.xp - a.xp);
+
+            allUsers.forEach((user, index) => {
+                const rank = index + 1;
+                let rankBadgeBg = 'bg-slate-100 text-slate-700';
+                if (rank === 1) rankBadgeBg = 'bg-amber-100 text-amber-800 border border-amber-300';
+                else if (rank === 2) rankBadgeBg = 'bg-slate-200 text-slate-800';
+                else if (rank === 3) rankBadgeBg = 'bg-amber-50 text-amber-900 border border-amber-200';
+
+                const div = document.createElement('div');
+                div.className = `p-3 rounded-2xl flex items-center justify-between border transition ${user.isMe ? 'bg-emerald-50/80 border-emerald-300 shadow-sm' : 'bg-white border-slate-200 hover:bg-slate-50'}`;
+                
+                let nameHtml = '';
+                if (user.isMe) {
+                    nameHtml = `<span class="font-black text-slate-900">${user.name}</span> <span class="text-[9px] bg-emerald-600 text-white px-2 py-0.5 rounded-full">أنت 🌟</span>`;
+                } else {
+                    nameHtml = `<button onclick="editClassmateName('${user.id}')" class="font-black text-slate-800 hover:text-emerald-700 text-right underline decoration-dotted underline-offset-4 cursor-pointer" title="انقر لتعديل اسم الطالب">${user.name} ✏️</button>`;
+                }
+
+                div.innerHTML = `
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="w-7 h-7 rounded-xl ${rankBadgeBg} font-black text-xs flex items-center justify-center shrink-0">#${rank}</span>
+                        <div class="w-9 h-9 rounded-xl bg-slate-800 text-white font-bold flex items-center justify-center text-xs shrink-0">${user.avatar || 'ن'}</div>
+                        <div class="min-w-0">
+                            <div class="text-xs sm:text-sm flex items-center gap-2 truncate">${nameHtml}</div>
+                            <span class="text-[10px] text-slate-400 font-bold">طالب في الصف</span>
+                        </div>
+                    </div>
+                    <div class="text-left shrink-0">
+                        <span class="text-xs sm:text-sm font-black text-[#0F172A] font-mono">${user.xp.toLocaleString()}</span>
+                        <span class="text-[10px] font-bold text-[#00A651] block">XP</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderBadges() {
+            const container = document.getElementById('badges-grid');
+            container.innerHTML = '';
+
+            const badges = [
+                { id: 'b1', title: 'بطل الالتزام', req: 500, desc: 'الوصول إلى 500 دقيقة دراسة', icon: '🔥', unlocked: appState.xp >= 500 },
+                { id: 'b2', title: 'عبقري المواد العلمية', req: 2000, desc: 'إتمام 2,000 دقيقة دراسة', icon: '🧪', unlocked: appState.xp >= 2000 },
+                { id: 'b3', title: 'نجم الصف المتميز', req: 5000, desc: 'تجاوز 5,000 دقيقة دراسة', icon: '⭐', unlocked: appState.xp >= 5000 },
+                { id: 'b4', title: 'أسطورة البكالوريا', req: 10000, desc: 'الوصول إلى 10,000 دقيقة دراسة', icon: '🏆', unlocked: appState.xp >= 10000 }
+            ];
+
+            let unlockedCount = badges.filter(b => b.unlocked).length;
+            document.getElementById('badges-unlocked-count').textContent = `${unlockedCount} من 4 مفتوحة`;
+
+            badges.forEach(badge => {
+                const div = document.createElement('div');
+                div.className = `p-3.5 rounded-2xl border transition flex items-start gap-3 ${badge.unlocked ? 'bg-amber-50/60 border-amber-200 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-60'}`;
+                div.innerHTML = `
+                    <div class="w-11 h-11 rounded-2xl ${badge.unlocked ? 'bg-amber-400 text-slate-900 shadow-md animate-pulse' : 'bg-slate-200 text-slate-400'} flex items-center justify-center text-xl shrink-0">
+                        ${badge.icon}
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <h4 class="text-xs font-black text-slate-900">${badge.title}</h4>
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded-full ${badge.unlocked ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'}">
+                                ${badge.unlocked ? 'مفتوح ✓' : `مطلوب ${badge.req}د`}
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 font-medium mt-0.5 truncate">${badge.desc}</p>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderMilestones() {
+            const container = document.getElementById('milestones-grid');
+            container.innerHTML = '';
+
+            const milestones = [
+                { mins: 10000, title: 'المحطة 1', badge: '🥉', titleName: 'طالب مجتهد', reward: 'شهادة تقدير أولى' },
+                { mins: 20000, title: 'المحطة 2', badge: '🥈', titleName: 'نجم الصف', reward: 'فتح ثيم ذهبي' },
+                { mins: 30000, title: 'المحطة 3', badge: '🥇', titleName: 'بطل التركيز', reward: 'وسام الانضباط التربوي' },
+                { mins: 40000, title: 'المحطة 4', badge: '💡', titleName: 'مفكر اقتصادي', reward: 'شارة التميز' },
+                { mins: 50000, title: 'المحطة 5', badge: '🔥', titleName: 'نصف الطريق للأسطورة', reward: 'تهنئة د. ريما كرامي' },
+                { mins: 60000, title: 'المحطة 6', badge: '🛡️', titleName: 'قاهر الامتحانات', reward: 'درع التفوق الدراسي' },
+                { mins: 70000, title: 'المحطة 7', badge: '🧠', titleName: 'عقل استراتيجي', reward: 'وضع التركيز الفائق' },
+                { mins: 80000, title: 'المحطة 8', badge: '💎', titleName: 'نخبة البكالوريا', reward: 'وسام الشرف الطلابي' },
+                { mins: 90000, title: 'المحطة 9', badge: '👑', titleName: 'على أبواب المجد', reward: 'الترشح للوحة شرف لبنان' },
+                { mins: 100000, title: 'المحطة 10', badge: '🏆🇱🇧', titleName: 'أسطورة البكالوريا', reward: 'تكريم معالي الوزيرة!' }
+            ];
+
+            let unlockedCount = milestones.filter(m => appState.xp >= m.mins).length;
+            document.getElementById('milestones-unlocked-count').textContent = `${unlockedCount} / 10 محطات`;
+
+            milestones.forEach(m => {
+                const unlocked = appState.xp >= m.mins;
+                const div = document.createElement('div');
+                div.className = `p-3.5 rounded-2xl border transition flex flex-col justify-between ${unlocked ? 'bg-amber-50/80 border-amber-300 shadow-sm' : 'bg-white border-slate-200 opacity-70'}`;
+                div.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] font-black px-2 py-0.5 rounded-md ${unlocked ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-500'}">${m.title}</span>
+                            <span class="text-lg">${m.badge}</span>
+                        </div>
+                        <h4 class="text-xs font-black text-slate-900">${m.titleName}</h4>
+                        <p class="text-[10px] text-slate-500 font-semibold mt-0.5">${m.mins.toLocaleString()} دقيقة</p>
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-[10px] text-slate-600 font-bold truncate max-w-[110px]" title="${m.reward}">${m.reward}</span>
+                        <span class="text-[10px] font-black ${unlocked ? 'text-[#00A651]' : 'text-slate-400'}">${unlocked ? 'مفتوح ✓' : 'مغلق'}</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        let timerInterval = null;
+        let timeLeft = 25 * 60;
+        let isTimerRunning = false;
+
+        function toggleTimer() {
+            const btn = document.getElementById('timer-start-btn');
+            if (!isTimerRunning) {
+                isTimerRunning = true;
+                btn.innerHTML = `<i class="fa-solid fa-pause"></i> <span>إيقاف مؤقت</span>`;
+                btn.className = `px-6 py-3 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-sm shadow-lg transition flex items-center gap-2`;
+                
+                timerInterval = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        isTimerRunning = false;
+                        appState.xp += 25;
+                        appState.pomodoroSessions++;
+                        saveState();
+                        renderAll();
+                        showToast("أتممت جلسة التركيز! +25 دقيقة رصيد");
+                        resetTimer();
+                    }
+                }, 1000);
+            } else {
+                pauseTimer();
+                triggerMinisterRandom();
+            }
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            const btn = document.getElementById('timer-start-btn');
+            btn.innerHTML = `<i class="fa-solid fa-play"></i> <span>بدء الجلسة</span>`;
+            btn.className = `px-6 py-3 rounded-2xl bg-[#00A651] hover:bg-emerald-700 text-white font-extrabold text-sm shadow-lg shadow-emerald-600/20 transition flex items-center gap-2`;
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            timeLeft = 25 * 60;
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer-display').textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function completeDemoSession() {
+            appState.xp += 25;
+            appState.pomodoroSessions++;
+            saveState();
+            renderAll();
+            showToast("أتممت جلسة تجريبية سريعة! +25 دقيقة رصيد 🎓");
+        }
+
+        function addQuickMinutes(amount) {
+            appState.xp += amount;
+            saveState();
+            renderAll();
+            showToast(`أضفت ${amount.toLocaleString()} دقيقة بنجاح! 🚀`);
+        }
+
+        const ministerQuotes = [
+            "وين رايح؟ بعد ما بلّشنا!",
+            "التفوق ما بيصير بربع ساعة دراسة وعشر ساعات تليفون.",
+            "هيك بدك تجيب شهادة البكالوريا؟ ارجع فوراً!",
+            "الوقت اللي عم يضيع هلق، رح تندم عليه ليلة الامتحان.",
+            "سكّرت المؤقت؟ طيب والمنهاج مين رح يدرسه عنك؟",
+            "الانضباط يعني تكمل الجلسة للآخر، مش تهرب عند أول صعوبة.",
+            "شو صار؟ تعبت من 10 دقايق تركيز؟",
+            "المستقبل ما بينبنى بالتأجيل، ارجع كمل جلستك.",
+            "إذا من هلق عم تستسلم، كيف رح تواجه أسئلة الدورة الرسمية؟",
+            "تركيزك وينه؟ التليفون مش رح يكتبلك مسابقة الاقتصاد!",
+            "ما في شي اسمه 'بدرس بعدين'.. بعدين ما بيجي أبداً.",
+            "رجاع شغل المؤقت، بعد ما خلصت مهمتك!",
+            "النجاح بده نفس طويل، مش هروب من أول جولة.",
+            "كل دقيقة عم تقطع هلق محسوبة عليك، مش إلك.",
+            "أنا عم خطط لتطوير التعليم، وإنت عم تخطط كيف تهرب من الدرس؟",
+            "انكسر الـ Streak! 6 أيام تعب راحوا عالفاضي؟",
+            "غبت يوم واحد، رجعت لنقطة الصفر.. وين الالتزام؟",
+            "التكاسل هو العدو الأول لطموحك، صحصح!",
+            "بصراحة خيّبت أملي، كنت مفكرتك قد المسؤولية.",
+            "شو عذرك اليوم؟ ما في عذر بيبرر إنك ما تفتح كتاب.",
+            "زملاؤك عم يتقدموا بالترتيب وإنت عم ترجع لورا.",
+            "الالتزام مش مزاج، الالتزام واجب.",
+            "صفر أيام التزام؟ هاد الرقم ما بيليق بطالب بكالوريا.",
+            "إذا ما التزمت مع حالك، كيف بدك تلتزم بمستقبلك؟",
+            "الفرص ما بتنطر المتكاسلين، ارجع بلش من جديد فوراً.",
+            "يوم راحة جرّ يوم كسل، وهلق رجعنا من الأول!",
+            "لوحة المتصدرين عم تناديك، وإنت نايم بالعسل.",
+            "الشهادة بدها تعب يومي، مش دراسة بالمناسبات.",
+            "كسر الـ Streak سهل، بس بناؤه من جديد بده إرادة.. فرجيني همتك!",
+            "ما رح أقبل شوف عدادك عالصفر بكرا!",
+            "لائحة المهام عم تطول وإنت بعدك مكانك!",
+            "التأجيل ما بيحل المسائل، امسك القلم وبلش.",
+            "كل هاي مهام معلّقة؟ شو ناطر، المعجزة؟",
+            "الطالب الشاطر بيخلص شغله أول بأول، ما بيراكم دروسه.",
+            "شوف قديش باقيلك مهام.. بلش بأصعب وحدة هلق!",
+            "ما تضحك عحالك تقول 'بخلصهم كلهم بكرا'.",
+            "التربية والتنظيم أساس النجاح، نظّم وقتك فوراً.",
+            "كم مهمة أنجزت اليوم؟ الرقم بيحكي لحاله!",
+            "الإنجاز بده فعل، مش بس تفرّج عالشاشة.",
+            "حط علامة صح عأول مهمة هلق، بلا كسل!",
+            "يا ابني/بنتي، الكهربا والإنترنت مش حجة، افتح الكتاب الورقي!",
+            "بدنا نبني جيل واعي ومتعلم، شدّ حيلك شوي!",
+            "بزحلة وبكل لبنان عنا طاقات بتكسر الصخر، لا تضيع طاقتك عالفاضي.",
+            "الامتحانات الرسمية عالأبواب، مش وقت الكسل أبداً.",
+            "بدك ترفع راس أهلك ومدرستك؟ ارجع عالدرس هلق!",
+            "التعليم هو سلاحك الوحيد بهالبلد، لا تتخلى عنه.",
+            "مش رح نسمح بالتسرب ولا بالتكاسل، يلا عالدرس!",
+            "إذا ما تعبت اليوم، كيف بدك تفوت عالجامعة اللي بتحلم فيها؟",
+            "الكسل ما بيعمر وطن، همّتك هي الأساس.",
+            "يلا، سكر السوشيال ميديا وركز بدروسك.. عم راقبك!"
+        ];
+
+        function triggerMinisterRandom() {
+            const randomIndex = Math.floor(Math.random() * ministerQuotes.length);
+            document.getElementById('minister-quote-text').textContent = `"${ministerQuotes[randomIndex]}"`;
+            document.getElementById('minister-modal').classList.remove('hidden');
+            document.getElementById('minister-modal').classList.add('flex');
+        }
+
+        function closeMinisterModal() {
+            document.getElementById('minister-modal').classList.add('hidden');
+            document.getElementById('minister-modal').classList.remove('flex');
+        }
+
+        function resetDataPrompt() {
+            if (confirm("هل تريد حقاً إعادة ضبط وتصفير بياناتك بالكامل؟")) {
+                localStorage.removeItem(STORAGE_KEY);
+                appState = JSON.parse(JSON.stringify(defaultState));
+                renderAll();
+                showToast("تم إعادة ضبط لوحة التحكم.");
+            }
+        }
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'bg-[#0F172A] text-white text-xs font-black px-4 py-3 rounded-2xl shadow-xl border border-slate-700 pointer-events-auto animate-in fade-in slide-in-from-bottom duration-300';
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3000);
+        }
+    </script>
+</body>
+</html>
+```
