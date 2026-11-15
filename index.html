@@ -535,8 +535,8 @@
         };
 
         const defaultState = {
-            studentName: 'نور درزي',
-            schoolName: 'ثانوية الدكتور نزيه البزري - صيدا، لبنان',
+            studentName
+            schoolName: '
             studentBranch: 'GS / SG',
             customSubjects: [],
             selectedSubjectFilter: 'الكل',
@@ -659,10 +659,10 @@
             const branchSelectEl = document.getElementById('inline-student-branch');
 
             if (nameInputEl && document.activeElement !== nameInputEl) {
-                nameInputEl.value = appState.studentName || 'نور درزي';
+                nameInputEl.value = appState.studentName || ;
             }
             if (schoolInputEl && document.activeElement !== schoolInputEl) {
-                schoolInputEl.value = appState.schoolName || 'ثانوية الدكتور نزيه البزري - صيدا، لبنان';
+                schoolInputEl.value = appState.schoolName ||;
             }
             if (branchSelectEl) {
                 branchSelectEl.value = appState.studentBranch || 'GS / SG';
