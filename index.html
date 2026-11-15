@@ -535,8 +535,8 @@
         };
 
         const defaultState = {
-            studentName
-            schoolName: '
+            studentName:'           ',
+            schoolName:'            ',
             studentBranch: 'GS / SG',
             customSubjects: [],
             selectedSubjectFilter: 'الكل',
@@ -577,7 +577,7 @@
 
         function handleNameInput(val) {
             appState.studentName = val;
-            saveState();
+            saveState();"      ",
             updateIdentityUI();
         }
 
