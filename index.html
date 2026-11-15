@@ -1169,40 +1169,6 @@
     setTimeout(syncAndLoad, 2000);
 })();
 </script>
-    <script>
-(function() {
-    const DB_URL = "https://firebasedatabase.app";
-    let uid = localStorage.getItem('injazi_live_uid') || ('stu_' + Math.random().toString(36).substring(2, 10));
-    localStorage.setItem('injazi_live_uid', uid);
-
-    async function syncWithFirebase() {
-        try {
-            if (typeof appState !== 'undefined' && appState.studentName && appState.studentName.trim()) {
-                await fetch(`${DB_URL}/students/${uid}.json`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        id: uid,
-                        name: appState.studentName.trim(),
-                        school: appState.schoolName || 'لبنان 🇱🇧',
-                        xp: Number(appState.xp || 0)
-                    })
-                });
-            }
-
-            const res = await fetch(`${DB_URL}/students.json`);
-            const data = await res.json();
-            if (!data || typeof appState === 'undefined') return;
-
-            appState.classmates = Object.values(data).filter(s => s && s.id !== uid && s.name);
-            if (typeof renderAll === 'function') renderAll();
-        } catch (e) {}
-    }
-
-    setInterval(syncWithFirebase, 5000);
-    setTimeout(syncWithFirebase, 1500);
-})();
-</script>
      </body>
 </html>
 
